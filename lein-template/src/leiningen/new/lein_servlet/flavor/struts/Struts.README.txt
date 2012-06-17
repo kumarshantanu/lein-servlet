@@ -1,0 +1,6 @@
+The Apache Struts web framework is a free open-source solution for creating
+Java web applications. You can obtain more information about Struts at the
+project website:
+
+http://struts.apache.org/
+

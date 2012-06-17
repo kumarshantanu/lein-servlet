@@ -1,0 +1,6 @@
+Railo is a fast, Open Source CFML engine from JBoss. You can obtain more
+information about Railo at project websites:
+
+http://www.getrailo.org/
+
+https://github.com/getrailo/railo/

@@ -1,0 +1,51 @@
+Quercus is a cleanroom implementation of PHP 5 by Caucho Technology. You need
+Java 5 or higher to run Quercus. For more information, visit product website.
+
+http://quercus.caucho.com/
+
+
+(Rest of this document is taken from the README distributed with Quercus WAR.)
+
+
+Using a database with Quercus
+-----------------------------
+Quercus only needs a JDBC driver in order to use a particular database.
+To use the PHP mysql functions, you will need the MySQL JDBC driver.
+
+http://mvnrepository.com/artifact/mysql/mysql-connector-java/
+
+
+JDBC Connections
+----------------
+Quercus is able to use database connections from a DataSource configured
+using JNDI.  Application servers typically provide a mechanism for making a
+connection pool DataSource available with JNDI.
+
+Quercus database connection methods accept the JNDI name directly:
+
+  $conn = mysql_connect("java:comp/env/jdbc/myDatabaseName")
+
+  OR
+
+  $pdo = new PDO("java:comp/env/jdbc/myDatabaseName");
+
+If the web.xml contains a configuration for a JDBC database, then Quercus will
+ignore the arguments to PHP database functions and will connect directly to
+the preconfigured database.
+
+    <init-param>
+      <param-name>database</param-name>
+      <param-value>jdbc/myDatabaseName</param-value>
+    </init-param>
+
+Quercus will use the above database for all calls to the database like the
+ones below:
+
+  $conn = mysql_connect("localhost", "user", "pass");
+
+  OR
+
+  $pdo = new PDO("mysql:host=localhost", "user", "pass");
+
+Consult the documentation for your application server for instructions on
+configuring a database and making it available with a JNDI name.
