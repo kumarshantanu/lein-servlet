@@ -14,7 +14,6 @@
             ;; :deps    [[lein-servlet/adapter-jetty8  "0.1.0"]]
             :deps    [[lein-servlet/adapter-tomcat7 "0.1.0"]]
             :repos   {"railo-repo" "http://railo-repo.sourceforge.net/maven2"}
-            :engine  :tomcat ;; :jetty
             :config  {:port 3000}
             :webapps {"/" {:web-xml "public/WEB-INF/web.xml"
                            :public  "public"
