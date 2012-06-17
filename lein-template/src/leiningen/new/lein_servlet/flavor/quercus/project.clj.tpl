@@ -12,7 +12,7 @@
   :servlet {;; uncomment only either of the :deps entries below
             ;; :deps    [[lein-servlet/adapter-jetty7  "0.1.0"]]
             ;; :deps    [[lein-servlet/adapter-jetty8  "0.1.0"]]
-            :deps    [[lein-servlet/adapter-tomcat8 "0.1.0"]]
+            :deps    [[lein-servlet/adapter-tomcat7 "0.1.0"]]
             ;; :repos   {"caucho" "http://caucho.com/m2"}
             :config  {:port 3000}
             :webapps {"/" {:web-xml "public/WEB-INF/web.xml"
