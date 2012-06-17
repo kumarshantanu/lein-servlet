@@ -68,7 +68,7 @@ For a detail list of all possible configuration options please check the file
 `sample.project.clj`.
 
 
-### Usage
+### Command-line usage
 
 To view the configured servlet engine:
 
