@@ -96,11 +96,9 @@
   (let [deps    (get-in project DEPS)
         repos   (get-in project REPOS)]
     (when deps (load-deps deps repos)))
-  (println project)
   (let [project    (-> project
                        with-defaults
                        (update-project-deps (get-in project DEPS)))
-        _ (println "Servlet:" (:servlet project))
         wanted-eng (get-in project WANTED-ENG)
         config     (get-in project CONFIG)
         webapps    (get-in project WEBAPPS)
@@ -110,7 +108,6 @@
         port       (get-in project PORT)
         config     (merge {:tmpdir (str (:target-path project) \/ enam \. port)}
                           config)
-        _ (println "Config:" config)
         home-url   (str "http://localhost:" port)]
     (if (and ens enam)
       (eval/eval-in-project project `(let [e# (~full-name ~config ~webapps)]
@@ -119,26 +116,6 @@
                             `(do (require '~ens)
                                  (require 'clojure.java.browse)))
       (err-println "Unable to determine engine"))))
-
-
-(defn war
-  "Generate WAR file"
-  [project [app-name]]
-  (let [wa-conf (get-in project WEBAPPS)
-        webapps (zipmap (map as-str (keys wa-conf))
-                        (vals wa-conf))
-        w-names (set (keys webapps))
-        v-names (format "(valid names: %s)" (comma-sep (keys webapps)))]
-    (cond (empty? w-names)      (do (err-println "No webapps configured")
-                                    (help/show-help))
-          (w-names app-name)    (war/generate-war project
-                                                  (get webapps app-name))
-          app-name              (err-println "No such webapp name"
-                                         app-name v-names)
-          (= (count w-names) 1) (war/generate-war project
-                                                  (get webapps (first w-names)))
-          :otherwise            (err-println "Must specify app-name"
-                                         v-names))))
 
 
 (defn show-help
@@ -151,12 +128,32 @@ Synopsis:
 where <command> and respective <arguments> are:
     run
     war  [<app-name>]
-    help [config]
+    help
 
 To generate a new project template containing example configuration:
     lein new servlet demo
 ")
   (flush))
+
+
+(defn war
+  "Generate WAR file"
+  [project [app-name]]
+  (let [wa-conf (get-in project WEBAPPS)
+        webapps (zipmap (map as-str (keys wa-conf))
+                        (vals wa-conf))
+        w-names (set (keys webapps))
+        v-names (format "(valid names: %s)" (comma-sep (keys webapps)))]
+    (cond (empty? w-names)      (do (err-println "No webapps configured")
+                                    (show-help))
+          (w-names app-name)    (war/generate-war project
+                                                  (get webapps app-name))
+          app-name              (err-println "No such webapp name"
+                                         app-name v-names)
+          (= (count w-names) 1) (war/generate-war project
+                                                  (get webapps (first w-names)))
+          :otherwise            (err-println "Must specify app-name"
+                                         v-names))))
 
 
 (defn servlet
