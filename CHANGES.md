@@ -7,7 +7,7 @@
 * [TODO] Generate WAR file for a webapp
 
 
-## 2012-June-??
+## 2012-June-17
 
 * Servlet-engine adapters:
   * Jetty 7.6.3.v20120416 `lein-servlet/adapter-jetty7` `0.1.0`
