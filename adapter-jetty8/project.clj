@@ -1,6 +1,6 @@
 (defproject lein-servlet/adapter-jetty8 "0.1.0"
   :description "Jetty 8 adapter for lein-servlet"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/kumarshantanu/lein-servlet"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :eval-in-leiningen true
