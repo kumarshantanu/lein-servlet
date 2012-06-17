@@ -8,8 +8,8 @@
   :dependencies [[org.clojure/clojure "1.4.0"]]
   :aot [{{name}}.servlet]
   :servlet {;; uncomment only either of the :deps entries below
-            ;; :deps    [[lein-servlet/adapter-jetty  "0.1.0"]]
-            ;; :deps    [[lein-servlet/adapter-jett8  "0.1.0"]]
+            ;; :deps    [[lein-servlet/adapter-jetty7  "0.1.0"]]
+            ;; :deps    [[lein-servlet/adapter-jetty8  "0.1.0"]]
             :deps    [[lein-servlet/adapter-tomcat7 "0.1.0"]]
             :config  {:port 3000}
             :webapps {"/" {:classes {"/*" '{{sanitized}}.servlet}
