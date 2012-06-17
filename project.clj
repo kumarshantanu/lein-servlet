@@ -6,4 +6,5 @@
         "adapter-jetty8"
         "adapter-tomcat7"
         "lein-template"
-        "plugin"])
+        "plugin"]
+  :eval-in :leiningen)

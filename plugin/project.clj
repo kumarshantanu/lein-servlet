@@ -6,6 +6,5 @@
   :min-lein-version "2.0.0"
   :dependencies []
   :warn-on-reflection true
-  :profiles {:dev {:dependencies [[leiningen-core "2.0.0-preview6"]]}}
-  :aliases  {"dev" ["with-profile" "dev"]}
+  :eval-in :leiningen
   :eval-in-leiningen true)
