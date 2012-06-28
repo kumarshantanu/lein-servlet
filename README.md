@@ -5,8 +5,8 @@ A Leiningen 2 plugin to work with servlet-based webapps.
 As of version `0.1.0`, the only activity it supports is to start a specified
 servlet container (Jetty and Tomcat are supported) with configured webapps.
 
-**NOTE:** This plugin is only to work with servlets based web apps. If you want
-idiomatic web development using Clojure, you should consider
+**NOTE:** This plugin is only to work with servlets based web apps. For
+idiomatic web development using Clojure you should consider
 [lein-ring](https://github.com/weavejester/lein-ring)
 and [ring](https://github.com/ring-clojure/ring).
 
