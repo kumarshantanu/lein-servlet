@@ -138,7 +138,7 @@ To generate a new project template containing example configuration:
 
 (defn war
   "Generate WAR file"
-  [project [app-name]]
+  [war-maker project [app-name]]
   (let [wa-conf (get-in project WEBAPPS)
         webapps (zipmap (map as-str (keys wa-conf))
                         (vals wa-conf))
@@ -146,25 +146,22 @@ To generate a new project template containing example configuration:
         v-names (format "(valid names: %s)" (comma-sep (keys webapps)))]
     (cond (empty? w-names)      (do (err-println "No webapps configured")
                                     (show-help))
-          (w-names app-name)    (war/generate-war project
-                                                  (get webapps app-name))
-          app-name              (err-println "No such webapp name"
-                                         app-name v-names)
-          (= (count w-names) 1) (war/generate-war project
-                                                  (get webapps (first w-names)))
-          :otherwise            (err-println "Must specify app-name"
-                                         v-names))))
+          (w-names app-name)    (war-maker project (get webapps app-name))
+          app-name              (err-println "No such webapp name" app-name v-names)
+          (= (count w-names) 1) (war-maker project (get webapps (first w-names)))
+          :otherwise            (err-println "Must specify app-name" v-names))))
 
 
 (defn servlet
   "Work with servlets in Java or another JVM language."
   [project & [cmd & args]]
   (case cmd
-    nil      (do (show-help) 1)
-    "engine" (engine project)
-    "run"    (run project args)
-    "war"    (war project args)
-    "help"   (show-help)
+    nil       (do (show-help) 1)
+    "engine"  (engine project)
+    "run"     (run project args)
+    "uberwar" (war (partial war/generate-war true) project args)
+    "war"     (war (partial war/generate-war false) project args)
+    "help"    (show-help)
     (do (err-println "Invalid subcommand" cmd "\n")
         (show-help)
         1)))
