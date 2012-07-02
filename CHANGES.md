@@ -5,6 +5,7 @@
 
 * [TODO] JNDI DataSource configuration
 * [TODO] Place web.xml outside of 'public' in templates
+* [TODO] Honor :jar-exclusions and :uberjar-exclusions keys in project(?)
 * Generate WAR file for webapps - TODO: Autogenerate web.xml for servlets-only
 
 
