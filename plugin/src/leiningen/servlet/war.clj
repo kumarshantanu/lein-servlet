@@ -2,6 +2,7 @@
   "Supporting code for `war` sub command"
   (:require [clojure.java.io :as io]
             [clojure.pprint  :as pp]
+            [leiningen.compile        :as lc]
             [leiningen.core.classpath :as classpath]
             [leiningen.core.main      :as main])
   (:import (java.io       BufferedOutputStream ByteArrayInputStream
@@ -9,18 +10,6 @@
            (java.util.jar JarEntry JarOutputStream Manifest)
            (java.util.zip ZipException)
            (org.sonatype.aether.resolution DependencyResolutionException)))
-
-
-(defn war-coords
-  "Return inferred WAR filename coordinates"
-  [project]
-  (let [art-id (:name project)
-        artver (:version project)
-        target (:target-path project)
-        warname (str art-id "-" artver)
-        warpath (str target "/" warname ".war")]
-    {:warname warname
-     :warpath warpath}))
 
 
 (defn classpath-entries
@@ -99,8 +88,7 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
     (when (instance? File source)
       (.setTime jar-entry (.lastModified ^File source)))
     (io/copy source jar-out)
-    (.closeEntry jar-out)
-    jar-out))
+    (.closeEntry jar-out)))
 
 
 (defn jar-cp-r!
@@ -114,16 +102,22 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
          (try (jar-mkdir! jar-out new-jar-path)
               (catch ZipException _)) ;; ignore ZipException on mkdir for overlay
          (jar-cp-r! jar-out each-file new-jar-path))
-       (jar-cp! jar-out each-file new-jar-path))))
-  jar-out)
+       (jar-cp! jar-out each-file new-jar-path)))))
 
 
 (defn generate-war
+  "Generate WAR file. Generate a Uberwar (WAR with dependency libraries) when
+  `deps?` is true."
   [deps? project webapp]
-  (println "WAR coords" (war-coords project))
-  ;;(println "Classpath entries" (classpath-entries project))
-  (flush)
-  (let [{:keys [warname warpath]} (war-coords project)]
+  (lc/compile project)
+  (let [warpath (->> [:target-path :name :version]
+                     (map project)
+                     (apply format "%s/%s-%s.war"))
+        as-vector #(cond (vector? %) %
+                         (seq? %)    (into [] %)
+                         (nil? %)    []
+                         :otherwise  [%])]
+    (println "Generating WAR file" warpath)
     (with-open [war-out (new-jar-file warpath)]
       (assert (instance? JarOutputStream war-out))
       ;; all static files
@@ -132,15 +126,22 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
         ;; TODO Move web.xml out of public folder in templates, uncomment below
         ;; (jar-cp! (File. (:web-xml webapp)) "WEB-INF/web.xml")
         )
-      ;; from classpath
-      ;; FIX Track https://github.com/technomancy/leiningen/issues/672
-      (doseq [each (classpath-entries project)]
-        (let [^File each-file (File. each)]
-          (when (.exists each-file)
-            (if (.isDirectory each-file)
-              (do (println "Copying classes from" each)
-                  (jar-cp-r! war-out each-file (str "WEB-INF/classes")))
-              (when deps?
-                (println "Adding JAR" each)
-                (jar-cp! war-out each-file (str "WEB-INF/lib/"
-                                                (.getName each-file)))))))))))
+      ;; all 'WEB-INF/classes/*' entries
+      (doseq [^File each-dir (->> [(when-not (:omit-source project) :source-paths)
+                                   :resource-paths :compile-path]
+                                  (remove nil?)
+                                  (map project)
+                                  (mapcat as-vector)
+                                  (map io/file))]
+        (when (.exists each-dir)
+          (assert (.isDirectory each-dir))
+          (println "Copying classes from" (.getAbsolutePath each-dir))
+          (jar-cp-r! war-out each-dir (str "WEB-INF/classes"))))
+      ;; all 'WEB-INF/lib/*' files
+      (when deps?
+        (doseq [^File each (->> (classpath-entries project)
+                                (map io/file))]
+          (when (and (.exists each) (.isFile each))
+            (println "Adding library" (.getAbsolutePath each))
+            (jar-cp! war-out each (str "WEB-INF/lib/" (.getName each)))))))
+    (println "WAR file" warpath "is created")))
