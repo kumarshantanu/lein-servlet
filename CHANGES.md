@@ -1,13 +1,14 @@
 # Changes and TODO
 
 
-## 2012-????-??
+## 2012-July-?? / 0.2.0
 
 * [TODO] JNDI DataSource configuration
-* [TODO] Generate WAR file for a webapp
+* [TODO] Place web.xml outside of 'public' in templates
+* Generate WAR file for webapps - TODO: Autogenerate web.xml for servlets-only
 
 
-## 2012-June-17
+## 2012-June-17 / 0.1.0
 
 * Servlet-engine adapters:
   * Jetty 7.6.3.v20120416 `lein-servlet/adapter-jetty7` `0.1.0`
