@@ -1,4 +1,4 @@
-(defproject lein-servlet "0.1.0"
+(defproject lein-servlet "0.2.0"
   :description "Leiningen plugin to work with servlet based webapps"
   :url "https://github.com/kumarshantanu/lein-servlet"
   :license {:name "Eclipse Public License"
