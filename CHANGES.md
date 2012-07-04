@@ -4,9 +4,8 @@
 ## 2012-July-?? / 0.2.0
 
 * [TODO] JNDI DataSource configuration
-* [TODO] Place web.xml outside of 'public' in templates
-* [TODO] Honor :jar-exclusions and :uberjar-exclusions keys in project(?)
-* Generate WAR file for webapps - TODO: Autogenerate web.xml for servlets-only
+* [TODO] Introduce :war-exclusions and :uberwar-exclusions under :servlet (?)
+* Generate WAR file for webapp from provided/auto-generated web.xml
 
 
 ## 2012-June-17 / 0.1.0
