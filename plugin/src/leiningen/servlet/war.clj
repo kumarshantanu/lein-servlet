@@ -2,9 +2,11 @@
   "Supporting code for `war` sub command"
   (:require [clojure.java.io :as io]
             [clojure.pprint  :as pp]
+            [clojure.string  :as str]
             [leiningen.compile        :as lc]
             [leiningen.core.classpath :as classpath]
-            [leiningen.core.main      :as main])
+            [leiningen.core.main      :as main]
+            [leiningen.servlet.util   :as util])
   (:import (java.io       BufferedOutputStream ByteArrayInputStream
                           File FileOutputStream)
            (java.util.jar JarEntry JarOutputStream Manifest)
@@ -105,11 +107,76 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
        (jar-cp! jar-out each-file new-jar-path)))))
 
 
+(defn emit-servlet-xml
+  [ctr url-pattern servlet-class init-params] {:pre [(string? url-pattern)
+                                                     (or (string? servlet-class)
+                                                         (symbol? servlet-class))
+                                                     (map? init-params)]}
+  (let [servlet-name (name (gensym))
+        init-kv-str (fn [[k v]] (format "
+    <init-param>
+      <param-name>%s</param-name>
+      <param-value>%s</param-value>
+    </init-param>"
+                                          (util/as-str k) (util/as-str v)))]
+    (format "
+  <servlet>
+    <servlet-name>%s</servlet-name>
+    <servlet-class>%s</servlet-class>
+    %s
+    <load-on-startup>%d</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>%s</servlet-name>
+    <url-pattern>%s</url-pattern>
+  </servlet-mapping>"
+            servlet-name (util/as-str servlet-class)
+            (->> init-params
+                 (map init-kv-str)
+                 (str/join "\n"))
+            ctr servlet-name url-pattern)))
+
+
+(defn make-temp-webxml
+  [webapp]
+  (let [classes   (:classes webapp)
+        as-vector #(if (coll? %) (into [] %) [%])
+        ^File
+        temp-file (File/createTempFile "lein-servlet-" "-web.xml")]
+    (assert (map? classes))
+    (assert (seq classes))
+    (->> classes
+         (map (fn [ctr [url-pattern v]]
+                (let [[klass init-params] (as-vector v)]
+                  (println "klass" klass "init-params" (pr-str init-params)) (flush)
+                  (emit-servlet-xml ctr url-pattern klass
+                                    (or init-params {})))) (iterate inc 1))
+         (str/join "\n")
+         (format "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE web-app
+     PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\"
+    \"http://java.sun.com/dtd/web-app_2_3.dtd\">
+<web-app>
+  %s
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+  </welcome-file-list>
+</web-app>")
+         (spit temp-file))
+    temp-file))
+
+
 (defn generate-war
   "Generate WAR file. Generate a Uberwar (WAR with dependency libraries) when
   `deps?` is true."
   [deps? project webapp]
-  (lc/compile project)
+  (lc/compile (merge-with concat project
+                          {:dependencies '[[javax.servlet/servlet-api "2.5"]]}))
   (let [warpath (->> [:target-path :name :version]
                      (map project)
                      (apply format "%s/%s-%s.war"))
@@ -120,13 +187,19 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
     (println "Generating WAR file" warpath)
     (with-open [war-out (new-jar-file warpath)]
       (assert (instance? JarOutputStream war-out))
-      ;; all static files
-      (doto war-out
-        (jar-cp-r! (File. (:public webapp)) "") ;; add public files
-        ;; TODO Move web.xml out of public folder in templates, uncomment below
-        ;; (jar-cp! (File. (:web-xml webapp)) "WEB-INF/web.xml")
-        )
-      ;; all 'WEB-INF/classes/*' entries
+      ;; all public files
+      (let [^File public (File. (:public webapp))]
+        (assert (.exists public))
+        (assert (.isDirectory public))
+        (jar-cp-r! war-out public "")) ;; add public files
+      ;; web.xml file
+      (let [^File web-xml (io/file (or (:web-xml webapp)
+                                       (make-temp-webxml webapp)))]
+        (assert (.exists web-xml))
+        (assert (.isFile web-xml))
+        (try (jar-cp! war-out web-xml "WEB-INF/web.xml")
+             (catch ZipException e)))
+      ;; all 'WEB-INF/classes/*' files
       (doseq [^File each-dir (->> [(when-not (:omit-source project) :source-paths)
                                    :resource-paths :compile-path]
                                   (remove nil?)
