@@ -140,7 +140,10 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
 (defn make-temp-webxml
   [webapp]
   (let [classes   (:classes webapp)
-        as-vector #(if (coll? %) (into [] %) [%])
+        as-vector (fn as-vector [x]
+                    (cond (list? x) (as-vector (eval x))
+                          (coll? x) (into [] x)
+                          :else     [x]))
         ^File
         temp-file (File/createTempFile "lein-servlet-" "-web.xml")]
     (assert (map? classes))
@@ -198,7 +201,9 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
         (assert (.exists web-xml))
         (assert (.isFile web-xml))
         (try (jar-cp! war-out web-xml "WEB-INF/web.xml")
-             (catch ZipException e)))
+             (catch ZipException e
+               (when-not (:web-xml webapp)
+                 (throw e)))))
       ;; all 'WEB-INF/classes/*' files
       (doseq [^File each-dir (->> [(when-not (:omit-source project) :source-paths)
                                    :resource-paths :compile-path]
