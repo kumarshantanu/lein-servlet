@@ -1,10 +1,21 @@
 # Changes and TODO
 
 
+## 2012-????-?? / 0.3.0
+
+* [TODO] Support servlet filters :filters
+* [TODO] Support servlet listeners :listeners
+* [TODO] Template for SpringMVC
+* [TODO] Template for Struts2
+
+
 ## 2012-July-?? / 0.2.0
 
 * [TODO] JNDI DataSource configuration
 * [TODO] Introduce :war-exclusions and :uberwar-exclusions under :servlet (?)
+* [TODO] Template for Jython/modjy/WSGI/flask/jinja2
+* [TODO] Rename :classes -> :servlets, to have :filters, :listeners in future
+* Handle servlet init params in adapters and auto-generated web.xml (WAR file)
 * Generate WAR file for webapp from provided/auto-generated web.xml
 
 
