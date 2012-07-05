@@ -40,9 +40,10 @@
                       {;; Map of URL-patterns to servlet classes.
                        ;; Every webapp must have either :classes or :web-xml
                        :classes {"/*"      com.myapp.WebappServlet
-                                 "/fr/*"   [com.myapp.WebappServlet "fr"]
-                                 "/it/*"   [com.myapp.WebappServlet "it"]
-                                 "/auth/*" com.myapp.AuthServlet}
+                                 "/fr/*"   [com.myapp.WebappServlet {:locale "fr"}]
+                                 "/it/*"   [com.myapp.WebappServlet {:locale "it"}]
+                                 "/auth/*" com.myapp.AuthServlet {:method "SamlToken"
+                                                                  :retries 5}}
                        ;; (required) Directory location for public resources
                        :public  "public"}}
                      {;; (required) Context-path of the webapp

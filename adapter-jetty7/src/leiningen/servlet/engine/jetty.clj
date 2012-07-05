@@ -42,12 +42,14 @@
         ;;;
         (class? servlet-class)
         (.newInstance servlet-class)
-        ;;;
-        (coll? servlet-class)
-        (let [[clazz & args] servlet-class]
-          (-> clazz as-class .getConstructor (.newInstance (into-array args))))
         :otherwise
         (make-servlet-instance (as-class servlet-class))))
+
+
+(defn as-servlet-config
+  [servlet-config]
+  (if (coll? servlet-config) (into [] servlet-config)
+      [servlet-config {}]))
 
 
 (defn make-servlet-context
@@ -57,12 +59,19 @@
       (.setContextPath  (as-context-path context-path))
       (.setResourceBase public-dir)
       (.setClassLoader  (-> (Thread/currentThread) .getContextClassLoader)))
-    (doseq [[url-pattern servlet-class] servlets-config]
+    (doseq [[url-pattern servlet-info] servlets-config]
       (assert (string? url-pattern))
-      (.addServlet context
-                   (-> (make-servlet-instance servlet-class)
-                       (ServletHolder.))
-                   url-pattern))
+      (let [[servlet-class
+             init-params]  (as-servlet-config servlet-info)
+            servlet-holder (-> (make-servlet-instance servlet-class)
+                               (ServletHolder.))]
+        ;; set servlet init params if specified
+        (when (seq init-params)
+          (assert (map? init-params))
+          (doseq [[param-name param-value] init-params]
+            (.setInitParameter servlet-holder
+                               (as-str param-name) (as-str param-value))))
+        (.addServlet context servlet-holder url-pattern)))
     context))
 
 

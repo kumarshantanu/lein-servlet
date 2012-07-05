@@ -3,7 +3,7 @@
 http://people.apache.org/~markt/presentations/2010-11-04-Embedding-Tomcat.pdf"
   (:import (java.io File)
            (javax.servlet.http            HttpServlet)
-           (org.apache.catalina           Context)
+           (org.apache.catalina           Context Wrapper)
            (org.apache.catalina.connector Connector)
            (org.apache.catalina.startup   Tomcat)))
 
@@ -27,6 +27,7 @@ http://people.apache.org/~markt/presentations/2010-11-04-Embedding-Tomcat.pdf"
 
 (defn as-class
   [x]
+  (println "x" x)
   (if (class? x) x
       (Class/forName (as-str x))))
 
@@ -39,12 +40,14 @@ http://people.apache.org/~markt/presentations/2010-11-04-Embedding-Tomcat.pdf"
         ;;;
         (class? servlet-class)
         (.newInstance servlet-class)
-        ;;;
-        (coll? servlet-class)
-        (let [[clazz & args] servlet-class]
-          (-> clazz as-class .getConstructor (.newInstance (into-array args))))
         :otherwise
         (make-servlet-instance (as-class servlet-class))))
+
+
+(defn as-servlet-config
+  [servlet-config]
+  (if (coll? servlet-config) (into [] servlet-config)
+      [servlet-config {}]))
 
 
 (defn make-servlet-context
@@ -53,11 +56,19 @@ http://people.apache.org/~markt/presentations/2010-11-04-Embedding-Tomcat.pdf"
         context (.addContext tomcat
                              (as-context-path context-path)
                              (-> public-dir (File.) (.getAbsolutePath)))]
-    (doseq [[url-pattern servlet-class] servlets-config]
+    (doseq [[url-pattern servlet-info] servlets-config]
       (assert (string? url-pattern))
-      (let [^String servlet-name (str (gensym))]
+      (let [^String  servlet-name    (str (gensym))
+                    [servlet-class
+                     init-params]    (as-servlet-config servlet-info)
+            ^Wrapper servlet-wrapper (->> (make-servlet-instance servlet-class)
+                                          (Tomcat/addServlet context servlet-name))]
         ;;(.addServlet tomcat url-pattern servlet-name (make-servlet-instance servlet-class))
-        (Tomcat/addServlet context servlet-name (make-servlet-instance servlet-class))
+        ;; set servlet init params if specified
+        (when (seq init-params)
+          (doseq [[param-name param-value] init-params]
+            (.addInitParameter servlet-wrapper
+                               (as-str param-name) (as-str param-value))))
         (.addServletMapping context url-pattern servlet-name)))
     context))
 
