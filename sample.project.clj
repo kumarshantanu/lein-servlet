@@ -33,23 +33,26 @@
                               ;; FIXME
                               :truststore-password ""}
                      ;; (optional) TODO
-                     :datasource {}}
+                     :jndi-datasources {"java:comp/env/jdbc/myDatabaseName"
+                                        {:adapter :mysql :host 'localhost
+                                         :database :empdb
+                                         :user 'empuser :password 's3cr3t}}}
             ;;; (required) Non-empty map of context-path to webapp-config
             :webapps {;; (required) Context-path - turns into '/app1'
                       :app1
                       {;; Map of URL-patterns to servlet classes.
-                       ;; Every webapp must have either :classes or :web-xml
-                       :classes {"/*"      com.myapp.WebappServlet
-                                 "/fr/*"   [com.myapp.WebappServlet {:locale "fr"}]
-                                 "/it/*"   [com.myapp.WebappServlet {:locale "it"}]
-                                 "/auth/*" com.myapp.AuthServlet {:method "SamlToken"
+                       ;; Every webapp must have either :servlets or :web-xml
+                       :servlets {"/*"      com.myapp.WebappServlet
+                                  "/fr/*"   [com.myapp.WebappServlet {:locale "fr"}]
+                                  "/it/*"   [com.myapp.WebappServlet {:locale "it"}]
+                                  "/auth/*" com.myapp.AuthServlet {:method "SamlToken"
                                                                   :retries 5}}
                        ;; (required) Directory location for public resources
                        :public  "public"}}
                      {;; (required) Context-path of the webapp
                       "/app2"
                       {;; Path to the `web.xml` file
-                       ;; Every webapp must have either :classes or :web-xml
+                       ;; Every webapp must have either :servlets or :web-xml
                        :web-xml "public/WEB-INF/web.xml"
                        ;; (required) Directory location for public resources
                        :public  "public"
