@@ -139,16 +139,16 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
 
 (defn make-temp-webxml
   [webapp]
-  (let [classes   (:classes webapp)
+  (let [servlets  (:servlets webapp)
         as-vector (fn as-vector [x]
                     (cond (list? x) (as-vector (eval x))
                           (coll? x) (into [] x)
                           :else     [x]))
         ^File
         temp-file (File/createTempFile "lein-servlet-" "-web.xml")]
-    (assert (map? classes))
-    (assert (seq classes))
-    (->> classes
+    (assert (map? servlets))
+    (assert (seq servlets))
+    (->> servlets
          (map (fn [ctr [url-pattern v]]
                 (let [[klass init-params] (as-vector v)]
                   (println "klass" klass "init-params" (pr-str init-params)) (flush)

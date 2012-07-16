@@ -12,5 +12,5 @@
             ;; :deps    [[lein-servlet/adapter-jetty8  "0.2.0"]]
             :deps    [[lein-servlet/adapter-tomcat7 "0.2.0"]]
             :config  {:port 3000}
-            :webapps {"/" {:classes {"/*" '{{sanitized}}.servlet}
+            :webapps {"/" {:servlets {"/*" '{{sanitized}}.servlet}
                            :public "public"}}})

@@ -122,10 +122,11 @@ http://people.apache.org/~markt/presentations/2010-11-04-Embedding-Tomcat.pdf"
     (doseq [[ctx-path webapp-cfg] webapps]
       (let [pub (:public webapp-cfg)
             cfg (merge config (:config webapp-cfg))]
-        (if (contains? webapp-cfg :classes)
-          (make-servlet-context tomcat ctx-path (:classes webapp-cfg) pub cfg)
+        (if (contains? webapp-cfg :servlets)
+          (make-servlet-context tomcat ctx-path (:servlets webapp-cfg) pub cfg)
           (make-webapp-context  tomcat ctx-path (:web-xml webapp-cfg) pub cfg))))
     ;; start server
+    ;; (.enableNaming tomcat)
     (.start tomcat)
     tomcat))
 
