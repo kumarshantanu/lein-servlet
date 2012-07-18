@@ -3,20 +3,29 @@
 
 ## 2012-????-?? / 0.3.0
 
+* [TODO] First class Ring support (co-existing Clojure/Other webapp)
+* [TODO] JNDI DataSource configuration
 * [TODO] Support servlet filters :filters
 * [TODO] Support servlet listeners :listeners
 * [TODO] Template for SpringMVC
 * [TODO] Template for Struts2
+* [TODO] Template for Jython/modjy/WSGI/flask/jinja2
+* [TODO] Template for Ruby/jrack/Sinatra
 
 
 ## 2012-July-?? / 0.2.0
 
-* [TODO] JNDI DataSource configuration
-* [TODO] Introduce :war-exclusions and :uberwar-exclusions under :servlet (?)
-* [TODO] Template for Jython/modjy/WSGI/flask/jinja2
-* [TODO] Rename :classes -> :servlets, to have :filters, :listeners in future
-* Handle servlet init params in adapters and auto-generated web.xml (WAR file)
-* Generate WAR file for webapp from provided/auto-generated web.xml
+* Servlet-engine adapters:
+  * Jetty 7.6.4.v20120524 `lein-servlet/adapter-jetty7` `0.2.0`
+  * Jetty 8.1.4.v20120524 `lein-servlet/adapter-jetty8` `0.2.0`
+  * Tomcat 7.0.29 `lein-servlet/adapter-tomcat7` `0.2.0`
+* Plugin `lein-servlet` `0.2.0`
+  * Support :war-exclusions and :uberwar-exclusions under :servlet
+  * Rename :classes to :servlets [TODO](README)
+  * Handle servlet init params in adapters and auto-generated web.xml (WAR file)
+  * Generate WAR file for webapp from provided/auto-generated web.xml
+* Templates: `lein-servlet/lein-template` `0.2.0`
+  * Point to plugin version `0.2.0`
 
 
 ## 2012-June-17 / 0.1.0
