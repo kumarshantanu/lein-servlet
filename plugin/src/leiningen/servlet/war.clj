@@ -73,6 +73,20 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
     (JarEntry. path)))
 
 
+(def ^{:doc "Patterns of qualified directories/filenames for exclusion from WAR"
+       :dynamic true}
+  *exclusion-patterns* [])
+
+
+(defn include?
+  "Return true if qualified `path` should be included in WAR, false otherwise"
+  [path]
+  (not (when-let [str-path (cond (instance? File path) (.getName ^File path)
+                                 (string? path)        path
+                                 :otherwise            nil)]
+         (some #(re-find % str-path) *exclusion-patterns*))))
+
+
 (defn jar-mkdir!
   "Create directory `jar-path` in JAR"
   [^JarOutputStream jar-out jar-path] {:pre [(instance? JarOutputStream jar-out)]}
@@ -85,26 +99,30 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
 (defn jar-cp!
   "Copy file from `source` to destination `jar-path` in JAR"
   [^JarOutputStream jar-out source jar-path] {:pre [(instance? JarOutputStream jar-out)]}
-  (let [^JarEntry jar-entry (jar-entry-file jar-path)]
-    (.putNextEntry jar-out jar-entry)
-    (when (instance? File source)
-      (.setTime jar-entry (.lastModified ^File source)))
-    (io/copy source jar-out)
-    (.closeEntry jar-out)))
+  (when (include? source)
+    (let [^JarEntry jar-entry (jar-entry-file jar-path)]
+      (.putNextEntry jar-out jar-entry)
+      (when (instance? File source)
+        (.setTime jar-entry (.lastModified ^File source)))
+      (io/copy source jar-out)
+      (.closeEntry jar-out))))
 
 
 (defn jar-cp-r!
   "Recursively copy files from `source` to destination `jar-path`. Note that
   `jar-path` must exist as a directory in the JAR already."
   [^JarOutputStream jar-out ^File source jar-path] {:pre [(.isDirectory source)]}
-  (doseq [^File each-file (.listFiles source)]
-    (let [new-jar-path (-> jar-path as-jar-dirname (str (.getName each-file)))]
-      (if (.isDirectory each-file)
-       (do
-         (try (jar-mkdir! jar-out new-jar-path)
-              (catch ZipException _)) ;; ignore ZipException on mkdir for overlay
-         (jar-cp-r! jar-out each-file new-jar-path))
-       (jar-cp! jar-out each-file new-jar-path)))))
+  (when (include? source)
+    (doseq [^File each-file (.listFiles source)]
+      (let [new-jar-path (-> jar-path as-jar-dirname (str (.getName each-file)))]
+        (when (and (include? each-file)
+                   (include? new-jar-path))
+          (if (.isDirectory each-file)
+            (do
+              (try (jar-mkdir! jar-out new-jar-path)
+                   (catch ZipException _)) ;; ignore ZipException on mkdir for overlay
+              (jar-cp-r! jar-out each-file new-jar-path))
+            (jar-cp! jar-out each-file new-jar-path)))))))
 
 
 (defn emit-servlet-xml
@@ -177,49 +195,51 @@ Created-By: lein-servlet\nBuilt-By: %s\nBuild-Jdk: %s"
 (defn generate-war
   "Generate WAR file. Generate a Uberwar (WAR with dependency libraries) when
   `deps?` is true."
-  [deps? project webapp]
+  [deps? exclusion-patterns project webapp]
   (lc/compile (merge-with concat project
                           {:dependencies '[[javax.servlet/servlet-api "2.5"]]}))
-  (let [warpath (->> [:target-path :name :version]
-                     (map project)
-                     (apply format "%s/%s-%s.war"))
-        as-vector #(cond (vector? %) %
-                         (seq? %)    (into [] %)
-                         (nil? %)    []
-                         :otherwise  [%])]
-    (println "Generating WAR file" warpath)
-    (with-open [war-out (new-jar-file warpath)]
-      (assert (instance? JarOutputStream war-out))
-      ;; all public files
-      (let [^File public (File. (:public webapp))]
-        (assert (.exists public))
-        (assert (.isDirectory public))
-        (jar-cp-r! war-out public "")) ;; add public files
-      ;; web.xml file
-      (let [^File web-xml (io/file (or (:web-xml webapp)
-                                       (make-temp-webxml webapp)))]
-        (assert (.exists web-xml))
-        (assert (.isFile web-xml))
-        (try (jar-cp! war-out web-xml "WEB-INF/web.xml")
-             (catch ZipException e
-               (when-not (:web-xml webapp)
-                 (throw e)))))
-      ;; all 'WEB-INF/classes/*' files
-      (doseq [^File each-dir (->> [(when-not (:omit-source project) :source-paths)
-                                   :resource-paths :compile-path]
-                                  (remove nil?)
-                                  (map project)
-                                  (mapcat as-vector)
+  (binding [*exclusion-patterns* exclusion-patterns]
+    (let [warpath (->> [:target-path :name :version]
+                       (map project)
+                       (apply format "%s/%s-%s.war"))
+          as-vector #(cond (vector? %) %
+                           (seq? %)    (into [] %)
+                           (nil? %)    []
+                           :otherwise  [%])]
+      (println "Generating WAR file" warpath)
+      (with-open [war-out (new-jar-file warpath)]
+        (assert (instance? JarOutputStream war-out))
+        ;; all public files
+        (let [^File public (File. (:public webapp))]
+          (assert (.exists public))
+          (assert (.isDirectory public))
+          (jar-cp-r! war-out public "")) ;; add public files
+        ;; web.xml file
+        (let [^File web-xml (io/file (or (:web-xml webapp)
+                                         (make-temp-webxml webapp)))]
+          (assert (.exists web-xml))
+          (assert (.isFile web-xml))
+          (try (jar-cp! war-out web-xml "WEB-INF/web.xml")
+               (catch ZipException e
+                 (when-not (:web-xml webapp)
+                   (throw e)))))
+        ;; all 'WEB-INF/classes/*' files
+        (doseq [^File each-dir (->> [(when-not (:omit-source project)
+                                       :source-paths)
+                                     :resource-paths :compile-path]
+                                    (remove nil?)
+                                    (map project)
+                                    (mapcat as-vector)
+                                    (map io/file))]
+          (when (.exists each-dir)
+            (assert (.isDirectory each-dir))
+            (println "Copying classes from" (.getAbsolutePath each-dir))
+            (jar-cp-r! war-out each-dir (str "WEB-INF/classes"))))
+        ;; all 'WEB-INF/lib/*' files
+        (when deps?
+          (doseq [^File each (->> (classpath-entries project)
                                   (map io/file))]
-        (when (.exists each-dir)
-          (assert (.isDirectory each-dir))
-          (println "Copying classes from" (.getAbsolutePath each-dir))
-          (jar-cp-r! war-out each-dir (str "WEB-INF/classes"))))
-      ;; all 'WEB-INF/lib/*' files
-      (when deps?
-        (doseq [^File each (->> (classpath-entries project)
-                                (map io/file))]
-          (when (and (.exists each) (.isFile each))
-            (println "Adding library" (.getAbsolutePath each))
-            (jar-cp! war-out each (str "WEB-INF/lib/" (.getName each)))))))
-    (println "WAR file" warpath "is created")))
+            (when (and (.exists each) (.isFile each))
+              (println "Adding library" (.getAbsolutePath each))
+              (jar-cp! war-out each (str "WEB-INF/lib/" (.getName each)))))))
+      (println "WAR file" warpath "is created"))))

@@ -56,6 +56,8 @@
 (def SSL        [:servlet :config :ssl])
 (def SSL-PORT   [:servlet :config :ssl :port])
 (def SSL-KSPATH [:servlet :config :ssl :keystore-path])
+(def WAR-EX     [:servlet :war-exclusions])
+(def UBERWAR-EX [:servlet :uberwar-exclusions])
 
 
 (defn with-defaults
@@ -137,7 +139,7 @@ To generate a new project template containing example configuration:
 
 
 (defn war
-  "Generate WAR file"
+  "Generate WAR file from auto-detected (default) or specified webapp name"
   [war-maker project [app-name]]
   (let [wa-conf (get-in project WEBAPPS)
         webapps (zipmap (map as-str (keys wa-conf))
@@ -159,8 +161,10 @@ To generate a new project template containing example configuration:
     nil       (do (show-help) 1)
     "engine"  (engine project)
     "run"     (run project args)
-    "uberwar" (war (partial war/generate-war true) project args)
-    "war"     (war (partial war/generate-war false) project args)
+    "uberwar" (war (partial war/generate-war true (get-in project WAR-EX))
+                   project args)
+    "war"     (war (partial war/generate-war false (get-in project UBERWAR-EX))
+                   project args)
     "help"    (show-help)
     (do (err-println "Invalid subcommand" cmd "\n")
         (show-help)
