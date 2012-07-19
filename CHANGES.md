@@ -13,7 +13,7 @@
 * [TODO] Template for Ruby/jrack/Sinatra
 
 
-## 2012-July-?? / 0.2.0
+## 2012-July-20 / 0.2.0
 
 * Servlet-engine adapters:
   * Jetty 7.6.4.v20120524 `lein-servlet/adapter-jetty7` `0.2.0`
@@ -21,7 +21,7 @@
   * Tomcat 7.0.29 `lein-servlet/adapter-tomcat7` `0.2.0`
 * Plugin `lein-servlet` `0.2.0`
   * Support :war-exclusions and :uberwar-exclusions under :servlet
-  * Rename :classes to :servlets [TODO](README)
+  * Rename :classes to :servlets
   * Handle servlet init params in adapters and auto-generated web.xml (WAR file)
   * Generate WAR file for webapp from provided/auto-generated web.xml
 * Templates: `lein-servlet/lein-template` `0.2.0`
