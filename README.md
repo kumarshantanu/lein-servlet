@@ -6,7 +6,7 @@ You may use this plugin to launch a servlet-based webapp using a suitable
 servlet engine adapter, or generate a war/uberwar file. Adapters for
 Jetty-7, Jetty-8 and Tomcat-7 are provided.
 
-**NOTE:** This plugin is only to work with servlets based web apps. For
+**NOTE:** This plugin is meant only to work with servlets based web apps. For
 idiomatic web development using Clojure you should consider
 [lein-ring](https://github.com/weavejester/lein-ring)
 and [ring](https://github.com/ring-clojure/ring).
@@ -24,9 +24,9 @@ example, a minimal configuration might look like this:
                          :public   "public"}}}
 ```
 
-Given the servlet class exists in classpath and directory `public` exists too,
-when you run `lein servlet run` it starts the Jetty servlet container with the
-webapp at http://localhost:3000/
+Given the servlet class exists in classpath and the directory `public` exists
+too, when you run `lein servlet run`, it starts the Jetty servlet container
+with the webapp at http://localhost:3000/
 
 
 ### Creating a project via templates
