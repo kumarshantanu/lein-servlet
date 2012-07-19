@@ -50,9 +50,9 @@ the `flavor` can be either of `quercus`, `railo` and `struts`. See examples:
 
 ```bash
 $ lein new lein-servlet foo          # creates a simple Clojure/servlet webapp
-$ lein new lein-servlet quercus foo  # " a Clojure/PHP webapp that uses Quercus
-$ lein new lein-servlet railo foo    # " a Clojure/CFML webapp that uses Railo
-$ lein new lein-servlet struts foo   # " a Clojure/Java webapp that uses Struts1
+$ lein new lein-servlet quercus foo  # creates a Clojure/PHP webapp that uses Quercus
+$ lein new lein-servlet railo foo    # creates a Clojure/CFML webapp that uses Railo
+$ lein new lein-servlet struts foo   # creates a Clojure/Java webapp that uses Struts1
 ```
 
 
