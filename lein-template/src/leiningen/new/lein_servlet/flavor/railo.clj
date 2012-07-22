@@ -24,6 +24,7 @@
                ["src/{{sanitized}}/util/jclojure.clj" (r "jclojure.clj")]
                ["test/{{sanitized}}/core_test.clj"    (r "core_test.clj")]
                ["public/WEB-INF/web.xml"              (r "web.xml")]
+               ["public/Application.cfc"              (r "Application.cfc")]
                ["public/index.cfm"                    (r "index.cfm")]
                "public/css"
                "public/js"
