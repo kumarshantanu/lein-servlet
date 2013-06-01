@@ -4,13 +4,14 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :warn-on-reflection true
-  :plugins [[lein-servlet "0.2.0"]]
-  :dependencies [[org.clojure/clojure "1.4.0"]]
+  :plugins [[lein-servlet "0.3.0"]]
+  :dependencies [[org.clojure/clojure "1.5.1"]]
   :aot [{{name}}.servlet]
   :servlet {;; uncomment only either of the :deps entries below
-            ;; :deps    [[lein-servlet/adapter-jetty7  "0.2.0"]]
-            ;; :deps    [[lein-servlet/adapter-jetty8  "0.2.0"]]
-            :deps    [[lein-servlet/adapter-tomcat7 "0.2.0"]]
+            ;; :deps    [[lein-servlet/adapter-jetty7  "0.3.0"]]
+            ;; :deps    [[lein-servlet/adapter-jetty8  "0.3.0"]]
+            ;; :deps    [[lein-servlet/adapter-jetty9  "0.3.0"]]
+            :deps    [[lein-servlet/adapter-tomcat7 "0.3.0"]]
             :config  {:port 3000}
             :webapps {"/" {:servlets {"/*" '{{sanitized}}.servlet}
                            :public "public"}}})
