@@ -1,7 +1,7 @@
 # Changes and TODO
 
 
-## 2012-????-?? / 0.3.0
+## 2013-????-?? / 0.4.0
 
 * [TODO] First class Ring support (co-existing Clojure/Other webapp)
 * [TODO] JNDI DataSource configuration
@@ -11,6 +11,22 @@
 * [TODO] Template for Struts2
 * [TODO] Template for Jython/modjy/WSGI/flask/jinja2
 * [TODO] Template for Ruby/jrack/Sinatra
+
+
+## 2013-June-02 / 0.3.0
+
+* Servlet-engine adapters:
+  * Jetty 7.6.11.v20130520 `lein-servlet/adapter-jetty7` `0.3.0`
+  * Jetty 8.1.11.v20130520 `lein-servlet/adapter-jetty8` `0.3.0`
+  * Jetty 9.0.3.v20130506  `lein-servlet/adapter-jetty9` `0.3.0` (new)
+  * Tomcat 7.0.40 `lein-servlet/adapter-tomcat7` `0.3.0`
+* Plugin `lein-servlet` `0.3.0`
+  * No change
+* Templates: `lein-servlet/lein-template` `0.3.0`
+  * Fix Railo template for idiomatic use (by Sean Corfield)
+  * Update Railo template to use Railo 4.2.0
+  * Update Struts-1 template to use Struts 1.3.10
+  * Point to plugin version `0.3.0`
 
 
 ## 2012-July-20 / 0.2.0
