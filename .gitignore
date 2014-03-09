@@ -1,2 +1,5 @@
 pom.xml
 /target/*
+.classpath
+.project
+
