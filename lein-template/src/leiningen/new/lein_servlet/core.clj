@@ -4,4 +4,4 @@
   (println "
 Please invoke this app as follows:
 
-$ lein2 servlet run"))
+$ lein servlet run"))
