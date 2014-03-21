@@ -1,4 +1,4 @@
-(defproject lein-servlet/lein-template "0.3.0"
+(defproject lein-servlet/lein-template "0.4.0"
   :description "Templates for lein-servlet"
   :url "https://github.com/kumarshantanu/lein-servlet"
   :license {:name "Eclipse Public License"
