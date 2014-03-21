@@ -13,6 +13,24 @@
 * [TODO] Template for Ruby/jrack/Sinatra
 
 
+## 2014-March-22 / 0.4.0
+
+* Servlet-engine adapters:
+  * Jetty 7.6.14.v20131031 `lein-servlet/adapter-jetty7`
+  * Jetty 8.1.14.v20131031 `lein-servlet/adapter-jetty8`
+  * Jetty 9.1.3.v20140225  `lein-servlet/adapter-jetty9`
+  * Tomcat 7.0.52 `lein-servlet/adapter-tomcat7`
+  * Tomcat 8.0.3 `lein-servlet/adapter-tomcat8` (new adapter)
+* Plugin `lein-servlet`
+  * No change
+* Templates: `lein-servlet/lein-template`
+  * Use plugin version 0.4.0 everywhere
+  * Update Quercus template to use Resin 4.0.30
+  * Update Railo template to use Railo 4.3.0
+  * Fix AOT compile issue in Struts template
+  * Fix deprecated Leiningen keys in `project.clj`
+
+
 ## 2013-June-02 / 0.3.0
 
 * Servlet-engine adapters:
