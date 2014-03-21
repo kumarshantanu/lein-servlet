@@ -27,7 +27,6 @@ http://people.apache.org/~markt/presentations/2010-11-04-Embedding-Tomcat.pdf"
 
 (defn as-class
   [x]
-  (println "x" x)
   (if (class? x) x
       (Class/forName (as-str x))))
 
