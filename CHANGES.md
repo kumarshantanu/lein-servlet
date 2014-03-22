@@ -1,7 +1,7 @@
 # Changes and TODO
 
 
-## 2013-????-?? / 0.4.0
+## ????-????-?? / ?.?.?
 
 * [TODO] First class Ring support (co-existing Clojure/Other webapp)
 * [TODO] JNDI DataSource configuration
