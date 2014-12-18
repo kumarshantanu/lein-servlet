@@ -131,7 +131,9 @@ Synopsis:
 
 where <command> and respective <arguments> are:
     run
-    war  [<app-name>]
+    engine
+    war      [<app-name>]
+    uberwar  [<app-name>]
     help
 
 To generate a new project template containing example configuration:
