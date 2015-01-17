@@ -15,7 +15,7 @@ sources should go in `src` and Clojure test files should go in `test`.
 
 To run webapp in interactive mode:
 
-    lein2 servlet run
+    lein servlet run
 
 
 ## License

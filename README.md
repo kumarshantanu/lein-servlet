@@ -18,8 +18,8 @@ It takes multi-line configuration in `project.clj` to use `lein-servlet`. For
 example, a minimal configuration might look like this:
 
 ```clojure
-:plugins [[lein-servlet "0.4.0"]]
-:servlet {:deps    [[lein-servlet/adapter-jetty7 "0.4.0"]]
+:plugins [[lein-servlet "0.4.1"]]
+:servlet {:deps    [[lein-servlet/adapter-jetty7 "0.4.1"]]
           :webapps {"/" {:servlets {"/*" com.myapp.WebServlet}
                          :public   "public"}}}
 ```
@@ -61,7 +61,7 @@ $ lein new lein-servlet struts foo   # creates a Clojure/Java webapp that uses S
 The recommended use of `lein-servlet` is as a project-level plugin. Put
 `[lein-servlet "0.3.0"]` into the `:plugins` vector of your `project.clj`.
 
-If you must use this as a user-level plugin, put `[lein-servlet "0.4.0"]`
+If you must use this as a user-level plugin, put `[lein-servlet "0.4.1"]`
 into the `:plugins` vector of your `:user` profile.
 
 For a detail list of all possible configuration options please check the file
@@ -94,6 +94,7 @@ $ lein servlet uberwar # generates target/<filename>.war file with dependencies
 
 * Shantanu Kumar (author)
 * Sean Corfield
+* Jürgen Hötzel (Github user [juergenhoetzel](https://github.com/juergenhoetzel))
 
 
 ## Getting in touch
@@ -107,6 +108,6 @@ E-mail: kumar.shantanu(at)gmail.com
 
 ## License
 
-Copyright © 2012-2014 Shantanu Kumar and contributors
+Copyright © 2012-2015 Shantanu Kumar and contributors
 
 Distributed under the Eclipse Public License, the same as Clojure.

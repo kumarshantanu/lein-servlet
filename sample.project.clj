@@ -4,10 +4,10 @@
 (defproject org.example/sample "0.1.0-SNAPSHOT"
   ;; ----- other entries omitted -----
   ;; Project level usage of the lein-servlet plugin is recommended
-  :plugins [[lein-servlet "0.4.0"]]
+  :plugins [[lein-servlet "0.4.1"]]
   ;; Configuration for the :lein-servlet plugin (required)
   :servlet {;;; (required) At most one engine adapter should be specified here
-            :deps [[lein-servlet/adapter-jetty7 "0.4.0"]]
+            :deps [[lein-servlet/adapter-jetty7 "0.4.1"]]
             ;;; (optional) Map of engine attributes
             :config {;; (optional) Unless specified, first available engine in
                      ;; classpath is used. Useful in rare cases when more than

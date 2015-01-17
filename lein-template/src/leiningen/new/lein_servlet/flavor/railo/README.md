@@ -15,7 +15,7 @@ source files should go in `src` and the Clojure test files should go in `test`.
 
 To run in development mode:
 
-    lein2 servlet run
+    lein servlet run
 
 
 ## License

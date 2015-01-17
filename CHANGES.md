@@ -13,6 +13,19 @@
 * [TODO] Template for Ruby/jrack/Sinatra
 
 
+## 2015-January-17 / 0.4.1
+
+* Servlet-engine adapters:
+  * Jetty 7.6.16.v20140903 `lein-servlet/adapter-jetty7`
+  * Jetty 8.1.16.v20140903 `lein-servlet/adapter-jetty8`
+  * Jetty 9.2.6.v20141205  `lein-servlet/adapter-jetty9`
+  * Tomcat 7.0.57 `lein-servlet/adapter-tomcat7`
+  * Tomcat 8.0.17 `lein-servlet/adapter-tomcat8` (new adapter)
+* Plugin `lein-servlet`
+  * Fix support for Maven HTTP proxy [#5](https://github.com/kumarshantanu/lein-servlet/pull/5)
+* Templates: `lein-servlet/lein-template`
+  * Use plugin version 0.4.1 everywhere
+
 ## 2014-March-22 / 0.4.0
 
 * Servlet-engine adapters:

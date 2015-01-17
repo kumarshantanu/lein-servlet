@@ -16,7 +16,7 @@ directory, Clojure source files into `src` and Clojure test files into `test`.
 
 To run webapp in interactive mode:
 
-    $ lein2 servlet run
+    $ lein servlet run
 
 
 ## License

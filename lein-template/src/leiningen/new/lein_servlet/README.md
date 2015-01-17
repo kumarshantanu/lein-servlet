@@ -15,7 +15,7 @@ Keep private JSP files (if any) in `public/WEB-INF`.
 
 To run the webapp in interactive mode:
 
-    $ lein2 servlet run
+    $ lein servlet run
 
 
 ## License
