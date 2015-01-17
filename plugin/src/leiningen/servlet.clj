@@ -4,6 +4,7 @@
   (:require [clojure.java.browse :as browse]
             [leiningen.servlet.engine :as eng]
             [leiningen.servlet.war    :as war]
+            [leiningen.core.classpath :as cp]
             [leiningen.core.eval      :as eval]
             [cemerick.pomegranate     :as pome])
   (:import (java.io File FileNotFoundException)))
@@ -40,7 +41,8 @@
    :coordinates deps
    :repositories (merge cemerick.pomegranate.aether/maven-central
                         {"clojars" "http://clojars.org/repo"}
-                        repos)))
+                        repos)
+   :proxy (cp/get-proxy-settings)))
 
 
 ;; ------------------ Project specific ------------------
@@ -129,7 +131,9 @@ Synopsis:
 
 where <command> and respective <arguments> are:
     run
-    war  [<app-name>]
+    engine
+    war      [<app-name>]
+    uberwar  [<app-name>]
     help
 
 To generate a new project template containing example configuration:
